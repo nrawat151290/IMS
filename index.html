@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Invitees List</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Helvetica';
+      font-size: 14px;
+      color: #3e4e62;
+    }
+
+    .container {
+      margin-top: 200px;
+    }
+
+    .container,
+    .list-container {
+      display: none;
+    }
+
+    .occasion-container {
+      width: 100%;
+      min-height: 60px;
+      position: fixed;
+      top: 78px;
+      text-align: center;
+      color: #3e4e62;
+      background-color: #fcfbf9;
+      box-shadow: 0 2px 6px 0 rgba(82, 96, 114, 0.12);
+      padding: 15px;
+    }
+
+    .container .input-label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .occasion-container .occasion-label {
+      display: block;
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    .container .sub-container:not(:first-child) {
+      margin-top: 20px;
+    }
+
+    .banner {
+      width: 100%;
+      min-height: 60px;
+      position: fixed;
+      top: 0;
+      text-align: center;
+      color: #3e4e62;
+      background-color: #fcfbf9;
+      box-shadow: 0 2px 6px 0 rgba(82, 96, 114, 0.12);
+      padding: 15px;
+    }
+
+    .banner-text {
+      font-weight: bold;
+      font-size: 42px;
+    }
+
+    .container .input-field {
+      padding: 10px;
+      border-radius: 2px;
+      border: 1px solid lightgrey;
+      width: 400px;
+    }
+
+    .container .button {
+      border-radius: 2px;
+      background-color: #01688b;
+      border: none;
+      width: 150px;
+      height: 30px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .fields-container,
+    .buttons-container,
+    .list-container {
+      padding: 20px;
+      border: 2px dashed grey;
+      margin-top: 30px;
+    }
+
+    .members-list .record-item {
+      padding: 15px;
+      border: 1px solid lightgrey;
+      width: 20%;
+      text-align: center;
+      min-height: 50px;
+    }
+
+    .header {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .container-header {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .container-sub-header {
+      font-size: 14px;
+      padding-top: 5px;
+    }
+
+    .members-list {
+      list-style-type: none;
+      padding-left: 0;
+      margin-top: 10px;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main-container">
+    <div id="banner" class="banner">
+      <span class="banner-text" id="bannerText">You have not selected any occasion</span>
+    </div>
+    <div id="whichOccasionContainer" class="occasion-container">
+      <label id="occasionLabel" class="occasion-label">Select Ocassion</label>
+      <input type="radio" id="wedding" onchange="setOccasion(this)" name="occasion" class="input-field-radio" value="wedding" />
+      <label for="wedding">Wedding</label>
+      <input type="radio" id="engagement" onchange="setOccasion(this)" name="occasion" class="input-field-radio" value="engagement"
+      />
+      <label for="engagement">Engagement</label>
+    </div>
+    <div class="container" id="detailsContainer">
+      <div class="fields-container">
+        <div class="container-header">Please fill in the details</div>
+        <div id="nameContainer" class="sub-container">
+          <label for="mainInvitee" id="mainInviteeNameLabel" class="input-label">Invitee Name(required)</label>
+          <input type="text" id="mainInvitee" class="input-field" />
+        </div>
+        <div id="noOfMembersContainer" class="sub-container">
+          <label for="numberOfMembers" id="noOfMembersLabel" class="input-label">Total Members(required)</label>
+          <input type="number" id="numberOfMembers" class="input-field" />
+        </div>
+        <div id="memberNamesContainer" class="sub-container">
+          <label for="memberNames" id="memberNamesLabel" class="input-label">Member Names(optional)</label>
+          <textarea rows="4" cols="50" id="memberNames" class="input-field"></textarea>
+        </div>
+        <div id="categoryContainer" class="sub-container">
+          <label id="categoryLabel" class="input-label">Relationship(required)</label>
+          <input type="radio" id="paternal" name="category" class="input-field-radio" value="paternal" />
+          <label for="paternal">Paternal</label>
+          <input type="radio" id="maternal" name="category" class="input-field-radio" value="maternal" />
+          <label for="maternal">Maternal</label>
+          <input type="radio" id="friends" name="category" class="input-field-radio" value="friends" />
+          <label for="friends">Friends</label>
+        </div>
+        <div class="sub-container">
+          <button id="submit" class="button" onclick="submitDetails()">Save</button>
+        </div>
+      </div>
+      <div class="buttons-container">
+        <div class="container-header">Features Available</div>
+        <div class="container-sub-header">Each button is clickable. Please click on corresponding button to perform the desired action.</div>
+        <div class="sub-container action-buttons-container">
+          <button id="getTotal" class="button" onclick="getTotalCount()">Get Total Invitees</button>
+          <button id="delete" class="button" onclick="deleteInvitee()">Delete Invitee</button>
+        </div>
+        <div class="sub-container">
+          <button id="getCompleteList" class="button" onclick="getCompleteList()">Get Complete List</button>
+          <button id="getPaternalList" class="button" onclick="getCategoryWiseList('paternal')">Get Paternal List</button>
+          <button id="getMaternalList" class="button" onclick="getCategoryWiseList('maternal')">Get Maternal List</button>
+          <button id="getFriendsList" class="button" onclick="getCategoryWiseList('friends')">Get Friends List</button>
+        </div>
+        <div class="sub-container">
+          <button id="exportToExcel" class="button" onclick="exportToExcel()">Export to Excel Sheet</button>
+        </div>
+      </div>
+    </div>
+    <div id="listContainer" class="list-container">
+      <div class="container-header">Details of Invitees</div>
+      <table id="listItems" class="members-list">
+        <tr class="list-item header">
+          <th class="sno record-item">S.No.</th>
+          <th class="invitee-name record-item">Name</th>
+          <th class="number-of-members record-item">Number of Members</th>
+          <th class="member-names record-item">Members</th>
+          <th class="member-names record-item">Category</th>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+<script type="text/javascript">
+  function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
+    //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
+    var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+
+    var CSV = '';
+    //Set Report title in first row or line
+
+    CSV += ReportTitle + '\r\n\n';
+
+    //This condition will generate the Label/Header
+    if (ShowLabel) {
+      var row = "";
+
+      //This loop will extract the label from 1st index of on array
+      for (var index in arrData[0]) {
+
+        //Now convert each value to string and comma-seprated
+        row += index + ',';
+      }
+
+      row = row.slice(0, -1);
+
+      //append Label row with line break
+      CSV += row + '\r\n';
+    }
+
+    //1st loop is to extract each row
+    for (var i = 0; i < arrData.length; i++) {
+      var row = "";
+
+      //2nd loop will extract each column and convert it in string comma-seprated
+      for (var index in arrData[i]) {
+        row += '"' + arrData[i][index] + '",';
+      }
+
+      row.slice(0, row.length - 1);
+
+      //add a line break after each row
+      CSV += row + '\r\n';
+    }
+
+    if (CSV == '') {
+      alert("Invalid data");
+      return;
+    }
+
+    //Generate a file name
+    var fileName = "MyReport_";
+    //this will remove the blank-spaces from the title and replace it with an underscore
+    fileName += ReportTitle.replace(/ /g, "_");
+
+    //Initialize file format you want csv or xls
+    var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+
+    // Now the little tricky part.
+    // you can use either>> window.open(uri);
+    // but this will not work in some browsers
+    // or you will not get the correct file extension    
+
+    //this trick will generate a temp <a /> tag
+    var link = document.createElement("a");
+    link.href = uri;
+
+    //set the visibility hidden so it will not effect on your web-layout
+    link.style = "visibility:hidden";
+    link.download = fileName + ".csv";
+
+    //this part will append the anchor tag and remove it after automatic click
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+</script>
+<script type="text/javascript">
+  (function () {
+    if (!localStorage.getItem('weddingList')) {
+      localStorage.setItem('weddingList', JSON.stringify([]));
+    }
+    if (!localStorage.getItem('engagementList')) {
+      localStorage.setItem('engagementList', JSON.stringify([]));
+    }
+  })();
+
+  function listToBeUsed(occasion) {
+    var listToBeRetreived = occasion === "wedding" ? 'weddingList' : 'engagementList';
+    return listToBeRetreived;
+  }
+
+  function getInviteesList(occasion) {
+    var listToBeRetreived = listToBeUsed(occasion);
+    return JSON.parse(localStorage.getItem(listToBeRetreived)) || [];
+  }
+
+  function submitDetails() {
+    var occasions = document.getElementsByName('occasion');
+    var occasion = ""
+    for (var i = 0; i < occasions.length; i++) {
+      if (occasions[i].checked) {
+        occasion = occasions[i].value.trim();
+      }
+    }
+
+    var mainInvitee = document.getElementById('mainInvitee').value.trim().toLowerCase();
+
+    var members = document.getElementById('numberOfMembers').value.trim();
+    members = members === "" ? 0 : parseInt(members);
+
+    var memberNames = document.getElementById('memberNames').value.trim();
+
+    var categories = document.getElementsByName('category');
+    var category = "";
+    for (var i = 0; i < categories.length; i++) {
+      if (categories[i].checked) {
+        category = categories[i].value.trim();
+      }
+    }
+    if (!occasion || !mainInvitee || !members || !category) {
+      alert('Please fill in all the required fields');
+      return;
+    }
+    var inviteeExists = checkInviteeExistence(mainInvitee, occasion);
+    if (!inviteeExists) {
+      var list = getInviteesList(occasion);
+      list.push({
+        occasion: occasion,
+        name: mainInvitee,
+        members: members,
+        memberNames: memberNames,
+        category: category
+      });
+      var whichList = listToBeUsed(occasion);
+      localStorage.setItem(whichList, JSON.stringify(list));
+      getCompleteList();
+    } else {
+      alert(mainInvitee.toUpperCase() + ' is already there in the list.');
+    }
+  }
+
+  function checkInviteeExistence(name, occasion) {
+    var list = getInviteesList(occasion);
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].name && list[i].name.toLowerCase() === name && name.toLowerCase()) {
+        return true;
+      }
+    }
+  }
+
+  function checkForCategoryMembers(category, members) {
+    if (!members.length) {
+      alert('There are no invitees in the ' + category.toUpperCase() + ' list.')
+    } else {
+      generateTable(members);
+    }
+  }
+
+  function getCompleteList() {
+    var occasion = getOccasion();
+    if (!occasion) {
+      alert('Please select the occasion first.');
+      return;
+    }
+    var list = getInviteesList(occasion);
+    if (!list.length) {
+      alert('You have not added any invitee yet.')
+    } else {
+      generateTable(list)
+    }
+  }
+
+  function getCategoryWiseList(category) {
+    var occasion = getOccasion();
+    if (!occasion) {
+      alert('Please select the occasion first.');
+      return;
+    }
+    var list = getInviteesList(occasion);
+    if (!list.length) {
+      alert('You have not added any invitee yet.')
+    } else {
+      var members = [];
+      list.forEach(function (item) {
+        if (item.category.toLowerCase() === category) {
+          members.push(item)
+        }
+      });
+      checkForCategoryMembers(category, members);
+    }
+  }
+
+  function getTotalCount() {
+    var occasion = getOccasion();
+    if (!occasion) {
+      alert('Please select the occasion first.');
+      return;
+    }
+    var list = getInviteesList(occasion);
+    var total = 0;
+    for (var i = 0; i < list.length; i++) {
+      total = total + list[i].members;
+    }
+    alert("Total number of invitees till now are: " + total);
+  }
+
+  function deleteInvitee() {
+    var occasion = getOccasion();
+    if (!occasion) {
+      alert('Please select the occasion first.');
+      return;
+    }
+    var list = getInviteesList(occasion);
+    if (!list.length) {
+      alert('There are no invitees in the list.');
+      return;
+    }
+    var name = prompt('Please enter invitee name.');
+    if (!name) {
+      return;
+    } else {
+      name = name.toLowerCase();
+      var origList = list.length;
+      if (!list.length) {
+        alert('There are no invitees in the list.')
+      } else {
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].name === name) {
+            list.splice(i, 1);
+          }
+        }
+        if (origList === list.length) {
+          alert('Entered name is not there in the list');
+        } else {
+          var whichList = listToBeUsed(occasion);
+          localStorage.setItem(whichList, JSON.stringify(list));
+          removeInviteesList();
+        }
+      }
+    }
+  }
+
+  function setOccasion(elem) {
+    localStorage.setItem('occasion', elem.value);
+    if (elem.value) {
+      document.getElementById('detailsContainer').style.display = 'block';
+      document.getElementById('listContainer').style.display = 'block';
+      document.getElementById('bannerText').innerHTML = elem.value.toUpperCase();
+      removeInviteesList();
+    }
+  }
+
+  function getOccasion() {
+    return localStorage.getItem('occasion') || "";
+  }
+
+  function removeInviteesList() {
+    var ul = document.getElementById('listItems');
+    while (ul.childNodes.length > 2) {
+      ul.removeChild(ul.lastChild);
+    }
+  }
+
+  function generateTable(list) {
+    if (!list.length) {
+      return;
+    } else {
+      var table = document.getElementById('listItems');
+      removeInviteesList();
+      var listItems = [];
+      list.forEach(function (item, index) {
+        listItems.push(generateListItem(item, index + 1))
+      });
+      listItems.forEach(function (item) {
+        table.appendChild(item);
+      });
+    }
+  }
+
+  function generateListItem(item, index) {
+    var record = document.createElement('tr');
+    record.className = 'list-item';
+
+    var serialNo = document.createElement('td');
+    serialNo.className = 'sno record-item';
+    serialNo.innerHTML = index;
+
+    var inviteeName = document.createElement('td');
+    inviteeName.className = 'invitee-name record-item';
+    inviteeName.innerHTML = item.name.toUpperCase();
+
+    var numberOfMembers = document.createElement('td');
+    numberOfMembers.className = 'number-of-members record-item';
+    numberOfMembers.innerHTML = item.members;
+
+    var members = document.createElement('td');
+    members.className = 'members record-item';
+    members.innerHTML = item.memberNames.toUpperCase();
+
+    var category = document.createElement('td');
+    category.className = 'category record-item';
+    category.innerHTML = item.category.toUpperCase();
+
+    record.appendChild(serialNo);
+    record.appendChild(inviteeName);
+    record.appendChild(numberOfMembers);
+    record.appendChild(members);
+    record.appendChild(category);
+    return record;
+  }
+
+  function exportToExcel() {
+    var occasion = getOccasion();
+    var data = getInviteesList(occasion);
+    JSONToCSVConvertor(data, "Invitees List " + occasion.toUpperCase());
+  }
+</script>
+
+</html>

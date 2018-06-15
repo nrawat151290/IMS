@@ -149,14 +149,6 @@
           <label for="mainInvitee" id="mainInviteeNameLabel" class="input-label">Invitee Name(required)</label>
           <input type="text" id="mainInvitee" class="input-field" />
         </div>
-        <div id="noOfMembersContainer" class="sub-container">
-          <label for="numberOfMembers" id="noOfMembersLabel" class="input-label">Total Members(required)</label>
-          <input type="number" id="numberOfMembers" class="input-field" />
-        </div>
-        <div id="memberNamesContainer" class="sub-container">
-          <label for="memberNames" id="memberNamesLabel" class="input-label">Member Names(optional)</label>
-          <textarea rows="4" cols="50" id="memberNames" class="input-field"></textarea>
-        </div>
         <div id="categoryContainer" class="sub-container">
           <label id="categoryLabel" class="input-label">Relationship(required)</label>
           <input type="radio" id="paternal" name="category" class="input-field-radio" value="paternal" />
@@ -165,6 +157,14 @@
           <label for="maternal">Maternal</label>
           <input type="radio" id="friends" name="category" class="input-field-radio" value="friends" />
           <label for="friends">Friends</label>
+        </div>
+        <div id="noOfMembersContainer" class="sub-container">
+          <label for="numberOfMembers" id="noOfMembersLabel" class="input-label">Total Members(required)</label>
+          <input type="number" id="numberOfMembers" class="input-field" />
+        </div>
+        <div id="memberNamesContainer" class="sub-container">
+          <label for="memberNames" id="memberNamesLabel" class="input-label">Member Names(optional)</label>
+          <textarea rows="4" cols="50" id="memberNames" class="input-field"></textarea>
         </div>
         <div class="sub-container">
           <button id="submit" class="button" onclick="submitDetails()">Save</button>

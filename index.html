@@ -196,7 +196,7 @@
           <th class="invitee-name record-item">Name</th>
           <th class="number-of-members record-item">Number of Members</th>
           <th class="member-names record-item">Members</th>
-          <th class="member-names record-item">Category</th>
+          <th class="member-names record-item">Relationship</th>
         </tr>
       </table>
     </div>
@@ -281,6 +281,7 @@
   var REQ_FIELDS = 'Please fill in all the required fields.';
   var SELECT_FIELDS = 'Please select the occasion first.';
   var INVALID_INVITEE_NAME = 'Entered name is not there in the list.';
+  var NO_INVITEES_CATEGORY = 'There are no invitees in the ';
 
   (function () {
     if (!localStorage.getItem('weddingList')) {
@@ -332,11 +333,11 @@
     if (!inviteeExists) {
       var list = getInviteesList(occasion);
       list.push({
-        occasion: occasion,
         name: mainInvitee,
         members: members,
         memberNames: memberNames,
-        category: category
+        category: category,
+        occasion: occasion
       });
       var whichList = listToBeUsed(occasion);
       localStorage.setItem(whichList, JSON.stringify(list));
@@ -357,7 +358,7 @@
 
   function checkForCategoryMembers(category, members) {
     if (!members.length) {
-      displayMessage('There are no invitees in the ' + category.toUpperCase() + ' list.')
+      displayMessage(NO_INVITEES_CATEGORY + category.toUpperCase() + ' list.')
     } else {
       generateTable(members);
     }
@@ -477,7 +478,7 @@
       removeInviteesList();
       var listItems = [];
       list.forEach(function (item, index) {
-        listItems.push(generateListItem(item, index + 1))
+        listItems.push(generateRecord(item, index + 1))
       });
       listItems.forEach(function (item) {
         table.appendChild(item);
@@ -485,35 +486,31 @@
     }
   }
 
-  function generateListItem(item, index) {
-    var record = document.createElement('tr');
-    record.className = 'list-item';
+  function createElement(tag, className, content) {
+    var elem = document.createElement(tag);
+    elem.className = className;
+    elem.innerHTML = content;
+    return elem;
+  }
 
-    var serialNo = document.createElement('td');
-    serialNo.className = 'sno record-item';
-    serialNo.innerHTML = index;
+  function appendChildNodes(parent, nodes) {
+    parent.innerHTML = "";
+    nodes.forEach(function (node) {
+      parent.appendChild(node);
+    });
+  }
 
-    var inviteeName = document.createElement('td');
-    inviteeName.className = 'invitee-name record-item';
-    inviteeName.innerHTML = item.name.toUpperCase();
+  function generateRecord(item, index) {
+    var record = createElement('tr', 'list-item');
+    var serialNo = createElement('td', 'sno record-item', index);
+    var inviteeName = createElement('td', 'invitee-name record-item', item.name.toUpperCase());
+    var numberOfMembers = createElement('td', 'number-of-members record-item', item.members);
+    var members = createElement('td', 'members record-item', item.memberNames.toUpperCase());
+    var category = createElement('td', 'category record-item', item.category.toUpperCase());
 
-    var numberOfMembers = document.createElement('td');
-    numberOfMembers.className = 'number-of-members record-item';
-    numberOfMembers.innerHTML = item.members;
+    var nodes = [serialNo, inviteeName, numberOfMembers, members, category];
+    appendChildNodes(record, nodes);
 
-    var members = document.createElement('td');
-    members.className = 'members record-item';
-    members.innerHTML = item.memberNames.toUpperCase();
-
-    var category = document.createElement('td');
-    category.className = 'category record-item';
-    category.innerHTML = item.category.toUpperCase();
-
-    record.appendChild(serialNo);
-    record.appendChild(inviteeName);
-    record.appendChild(numberOfMembers);
-    record.appendChild(members);
-    record.appendChild(category);
     return record;
   }
 
@@ -528,7 +525,7 @@
     }
   }
 
-  function displayMessage(message){
+  function displayMessage(message) {
     alert(message);
   }
 </script>

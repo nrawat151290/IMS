@@ -278,6 +278,10 @@
 </script>
 <script type="text/javascript">
   var NO_INVITEES = 'You have not added any invitee yet.';
+  var REQ_FIELDS = 'Please fill in all the required fields.';
+  var SELECT_FIELDS = 'Please select the occasion first.';
+  var INVALID_INVITEE_NAME = 'Entered name is not there in the list.';
+
   (function () {
     if (!localStorage.getItem('weddingList')) {
       localStorage.setItem('weddingList', JSON.stringify([]));
@@ -321,7 +325,7 @@
       }
     }
     if (!occasion || !mainInvitee || !members || !category) {
-      alert('Please fill in all the required fields');
+      displayMessage(REQ_FIELDS);
       return;
     }
     var inviteeExists = checkInviteeExistence(mainInvitee, occasion);
@@ -338,7 +342,7 @@
       localStorage.setItem(whichList, JSON.stringify(list));
       getCompleteList();
     } else {
-      alert(mainInvitee.toUpperCase() + ' is already there in the list.');
+      displayMessage(mainInvitee.toUpperCase() + ' is already there in the list.');
     }
   }
 
@@ -353,7 +357,7 @@
 
   function checkForCategoryMembers(category, members) {
     if (!members.length) {
-      alert('There are no invitees in the ' + category.toUpperCase() + ' list.')
+      displayMessage('There are no invitees in the ' + category.toUpperCase() + ' list.')
     } else {
       generateTable(members);
     }
@@ -362,12 +366,12 @@
   function getCompleteList() {
     var occasion = getOccasion();
     if (!occasion) {
-      alert('Please select the occasion first.');
+      displayMessage(SELECT_OCCASION);
       return;
     }
     var list = getInviteesList(occasion);
     if (!list.length) {
-      alert(NO_INVITEES)
+      displayMessage(NO_INVITEES)
     } else {
       generateTable(list)
     }
@@ -376,12 +380,12 @@
   function getCategoryWiseList(category) {
     var occasion = getOccasion();
     if (!occasion) {
-      alert('Please select the occasion first.');
+      displayMessage(SELECT_OCCASION);
       return;
     }
     var list = getInviteesList(occasion);
     if (!list.length) {
-      alert(NO_INVITEES)
+      displayMessage(NO_INVITEES)
     } else {
       var members = [];
       list.forEach(function (item) {
@@ -396,7 +400,7 @@
   function getTotalCount() {
     var occasion = getOccasion();
     if (!occasion) {
-      alert('Please select the occasion first.');
+      displayMessage(SELECT_OCCASION);
       return;
     }
     var list = getInviteesList(occasion);
@@ -404,18 +408,18 @@
     for (var i = 0; i < list.length; i++) {
       total = total + list[i].members;
     }
-    alert("Total number of invitees till now are: " + total);
+    displayMessage("Total number of invitees till now are: " + total);
   }
 
   function deleteInvitee() {
     var occasion = getOccasion();
     if (!occasion) {
-      alert('Please select the occasion first.');
+      displayMessage(SELECT_OCCASION);
       return;
     }
     var list = getInviteesList(occasion);
     if (!list.length) {
-      alert('There are no invitees in the list.');
+      displayMessage(NO_INVITEES);
       return;
     }
     var name = prompt('Please enter invitee name.');
@@ -425,7 +429,7 @@
       name = name.toLowerCase();
       var origList = list.length;
       if (!list.length) {
-        alert('There are no invitees in the list.')
+        displayMessage(NO_INVITEES)
       } else {
         for (var i = 0; i < list.length; i++) {
           if (list[i].name === name) {
@@ -433,7 +437,7 @@
           }
         }
         if (origList === list.length) {
-          alert('Entered name is not there in the list');
+          displayMessage(INVALID_INVITEE_NAME);
         } else {
           var whichList = listToBeUsed(occasion);
           localStorage.setItem(whichList, JSON.stringify(list));
@@ -517,11 +521,15 @@
     var occasion = getOccasion();
     var data = getInviteesList(occasion);
     if (!data.length) {
-      alert(NO_INVITEES);
+      displayMessage(NO_INVITEES);
       return;
     } else {
       JSONToCSVConvertor(data, "Invitees List " + occasion.toUpperCase());
     }
+  }
+
+  function displayMessage(message){
+    alert(message);
   }
 </script>
 

@@ -277,6 +277,7 @@
   }
 </script>
 <script type="text/javascript">
+  var NO_INVITEES = 'You have not added any invitee yet.';
   (function () {
     if (!localStorage.getItem('weddingList')) {
       localStorage.setItem('weddingList', JSON.stringify([]));
@@ -366,7 +367,7 @@
     }
     var list = getInviteesList(occasion);
     if (!list.length) {
-      alert('You have not added any invitee yet.')
+      alert(NO_INVITEES)
     } else {
       generateTable(list)
     }
@@ -380,7 +381,7 @@
     }
     var list = getInviteesList(occasion);
     if (!list.length) {
-      alert('You have not added any invitee yet.')
+      alert(NO_INVITEES)
     } else {
       var members = [];
       list.forEach(function (item) {
@@ -515,7 +516,12 @@
   function exportToExcel() {
     var occasion = getOccasion();
     var data = getInviteesList(occasion);
-    JSONToCSVConvertor(data, "Invitees List " + occasion.toUpperCase());
+    if (!data.length) {
+      alert(NO_INVITEES);
+      return;
+    } else {
+      JSONToCSVConvertor(data, "Invitees List " + occasion.toUpperCase());
+    }
   }
 </script>
 

@@ -125,6 +125,7 @@
       width: 20%;
       text-align: center;
       min-height: 50px;
+      word-break: break-all;
     }
 
     .header {
@@ -168,11 +169,11 @@
       <label for="engagement">Engagement</label>
     </div>
     <div class="container" id="detailsContainer">
-      <div class="fields-container">
+      <div class="fields-container" id="fieldsContainer">
         <div class="container-header">Please fill in the details</div>
         <div id="nameContainer" class="sub-container">
           <label for="name" id="mainInviteeNameLabel" class="input-label">Invitee Name(required)</label>
-          <input type="text" id="name" class="input-field form-field" />
+          <input type="text" id="name" class="input-field form-field" maxLength="50"/>
         </div>
         <div id="categoryContainer" class="sub-container">
           <label id="categoryLabel" class="input-label">Relationship(required)</label>
@@ -310,14 +311,6 @@
   }
 </script>
 <script type="text/javascript">
-  var NO_INVITEES = 'You have not added any invitee yet.';
-  var REQ_FIELDS = 'Please fill in all the required fields.';
-  var SELECT_FIELDS = 'Please select the occasion first.';
-  var INVALID_INVITEE_NAME = 'Entered name is not there in the list.';
-  var NO_INVITEES_CATEGORY = 'There are no invitees in the ';
-  var UPDATE_SUCCESS = "'s details have been successfully updated.";
-  var DELETE_SUCCESS = " has been deleted from records.";
-
   (function () {
     if (!localStorage.getItem('weddingList')) {
       localStorage.setItem('weddingList', JSON.stringify([]));
@@ -327,9 +320,23 @@
     }
   })();
 
+  var NO_INVITEES = 'You have not added any invitee yet.';
+  var REQ_FIELDS = 'Please fill in all the required fields.';
+  var SELECT_FIELDS = 'Please select the occasion first.';
+  var INVALID_INVITEE_NAME = 'Entered name is not there in the list.';
+  var NO_INVITEES_CATEGORY = 'There are no invitees in the ';
+  var UPDATE_SUCCESS = "'s details have been successfully updated.";
+  var DELETE_SUCCESS = " has been deleted from records.";
+  var SAVE_SUCCESS = "'s details have been saved successfully.";
+  var SELECT_OCCASION = "Please select an occasion first.";
+
   function scrollToTop() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
+  }
+
+  function getElementById(id) {
+    return document.getElementById(id);
   }
 
   function listToBeUsed(occasion) {
@@ -351,12 +358,12 @@
       }
     }
 
-    var name = document.getElementById('name').value.trim().toLowerCase();
+    var name = getElementById('name').value.trim().toLowerCase();
 
-    var members = document.getElementById('members').value.trim();
+    var members = getElementById('members').value.trim();
     members = members === "" ? 0 : parseInt(members);
 
-    var memberNames = document.getElementById('memberNames').value.trim();
+    var memberNames = getElementById('memberNames').value.trim();
 
     var categories = document.getElementsByName('category');
     var category = "";
@@ -396,17 +403,19 @@
       return;
     } else {
       for (var i = 0; i < list.length; i++) {
-        if (inviteeToBeUpdated === list[i].name) {
+        if (inviteeToBeUpdated.toLowerCase().trim() === list[i].name.toLowerCase().trim()) {
           list.splice(i, 1, fieldValues);
         }
       }
       var whichList = listToBeUsed(occasion);
+      debugger;
       localStorage.setItem(whichList, JSON.stringify(list));
-      document.getElementById('submit').style.display = 'inline-block';
-      document.getElementById('update').style.display = 'none';
+      getElementById('submit').style.display = 'inline-block';
+      getElementById('update').style.display = 'none';
       removeInviteesList();
       getCompleteList();
       resetDetails();
+      getElementById('fieldsContainer').style.backgroundColor = '#ffffff';
       displayMessage(inviteeToBeUpdated.toUpperCase() + UPDATE_SUCCESS);
     }
 
@@ -432,6 +441,7 @@
       localStorage.setItem(whichList, JSON.stringify(list));
       getCompleteList();
       resetDetails();
+      displayMessage(name.toUpperCase() + SAVE_SUCCESS);
     } else {
       displayMessage(name.toUpperCase() + ' is already there in the list.');
     }
@@ -439,11 +449,14 @@
 
   function checkInviteeExistence(name, occasion) {
     var list = getInviteesList(occasion);
+    var out = false;
     for (var i = 0; i < list.length; i++) {
-      if (list[i].name && list[i].name.toLowerCase() === name && name.toLowerCase()) {
-        return true;
+      if (list[i].name.toLowerCase().trim() === name.toLowerCase().trim()) {
+        out = true;
+        break;
       }
     }
+    return out;
   }
 
   function checkForCategoryMembers(category, members) {
@@ -538,7 +551,7 @@
           displayMessage(NO_INVITEES);
         } else {
           for (var i = 0; i < list.length; i++) {
-            if (list[i].name === name) {
+            if (list[i].name.toLowerCase().trim() === name.toLowerCase().trim()) {
               populateFields(list[i]);
               return;
             }
@@ -560,9 +573,10 @@
         currentField.value = data[currentField.id];
       }
     }
-    document.getElementById('update').style.display = 'inline-block';
-    document.getElementById('submit').style.display = 'none';
+    getElementById('update').style.display = 'inline-block';
+    getElementById('submit').style.display = 'none';
     scrollToTop();
+    getElementById('fieldsContainer').style.backgroundColor = '#f6f7f7'
   }
 
   function deleteInvitee() {
@@ -607,10 +621,10 @@
   function setOccasion(elem) {
     localStorage.setItem('occasion', elem.value);
     if (elem.value) {
-      document.getElementById('detailsContainer').style.display = 'block';
-      document.getElementById('listContainer').style.display = 'block';
-      document.getElementById('bannerText').innerHTML = elem.value.toUpperCase();
-      document.getElementById('bannerText').style.color = '#01688b';
+      getElementById('detailsContainer').style.display = 'block';
+      getElementById('listContainer').style.display = 'block';
+      getElementById('bannerText').innerHTML = elem.value.toUpperCase();
+      getElementById('bannerText').style.color = '#01688b';
       removeInviteesList();
     }
   }
@@ -620,7 +634,7 @@
   }
 
   function removeInviteesList() {
-    var ul = document.getElementById('listItems');
+    var ul = getElementById('listItems');
     while (ul.childNodes.length > 2) {
       ul.removeChild(ul.lastChild);
     }
@@ -630,7 +644,7 @@
     if (!list.length) {
       return;
     } else {
-      var table = document.getElementById('listItems');
+      var table = getElementById('listItems');
       removeInviteesList();
       var listItems = [];
       list.forEach(function (item, index) {
@@ -682,14 +696,14 @@
   }
 
   function displayMessage(message) {
-    var notification = document.getElementById('notification');
-    var notificationText = document.getElementById('notificationText');
+    var notification = getElementById('notification');
+    var notificationText = getElementById('notificationText');
     notificationText.innerHTML = message;
     notification.style.display = 'block';
 
     setTimeout(function () {
       notification.style.display = 'none';
-    }, 5000)
+    }, 7000)
   }
 </script>
 

@@ -43,6 +43,10 @@
       font-size: 16px;
     }
 
+    .radio-label {
+      cursor: pointer;
+    }
+
     .occasion-container .occasion-label {
       display: block;
       font-size: 36px;
@@ -189,10 +193,10 @@
     <div id="whichOccasionContainer" class="occasion-container">
       <label id="occasionLabel" class="occasion-label">Select Ocassion</label>
       <input type="radio" id="wedding" onchange="setOccasion(this)" name="occasion" class="input-field-radio" value="wedding" />
-      <label for="wedding">Wedding</label>
+      <label for="wedding" class="radio-label">Wedding</label>
       <input type="radio" id="engagement" onchange="setOccasion(this)" name="occasion" class="input-field-radio" value="engagement"
       />
-      <label for="engagement">Engagement</label>
+      <label for="engagement" class="radio-label">Engagement</label>
     </div>
     <div class="container" id="detailsContainer">
       <div class="fields-container" id="fieldsContainer">
@@ -204,11 +208,11 @@
         <div id="categoryContainer" class="sub-container">
           <label id="categoryLabel" class="input-label">Relationship(required)</label>
           <input type="radio" id="paternal" name="category" class="input-field-radio form-field" value="paternal" />
-          <label for="paternal">Paternal</label>
+          <label for="paternal" class="radio-label">Paternal</label>
           <input type="radio" id="maternal" name="category" class="input-field-radio form-field" value="maternal" />
-          <label for="maternal">Maternal</label>
+          <label for="maternal" class="radio-label">Maternal</label>
           <input type="radio" id="friends" name="category" class="input-field-radio form-field" value="friends" />
-          <label for="friends">Friends</label>
+          <label for="friends" class="radio-label">Friends</label>
         </div>
         <div id="noOfMembersContainer" class="sub-container">
           <label for="members" id="noOfMembersLabel" class="input-label">Total Members(required)</label>

@@ -10,8 +10,8 @@
     }
 
     body {
-      font-family: 'Helvetica';
-      font-size: 14px;
+      font-family: 'Garamond', Helvetica;
+      font-size: 16px;
       color: #3e4e62;
     }
 
@@ -101,6 +101,32 @@
       font-weight: 500;
     }
 
+    .button span {
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      transition: 0.5s;
+    }
+
+    .button span:after {
+      content: '\00bb';
+      position: absolute;
+      opacity: 0;
+      top: -3px;
+      font-size: 18px;
+      right: -20px;
+      transition: 0.5s;
+    }
+
+    .button:hover span {
+      padding-right: 15px;
+    }
+
+    .button:hover span:after {
+      opacity: 1;
+      right: 0;
+    }
+
     .container .reset-btn {
       background-color: #ffffff;
       color: #01688b;
@@ -134,12 +160,12 @@
     }
 
     .container-header {
-      font-size: 25px;
+      font-size: 30px;
       font-weight: bold;
     }
 
     .container-sub-header {
-      font-size: 14px;
+      font-size: 16px;
       padding-top: 5px;
     }
 
@@ -173,7 +199,7 @@
         <div class="container-header">Please fill in the details</div>
         <div id="nameContainer" class="sub-container">
           <label for="name" id="mainInviteeNameLabel" class="input-label">Invitee Name(required)</label>
-          <input type="text" id="name" class="input-field form-field" maxLength="50"/>
+          <input type="text" id="name" class="input-field form-field" maxLength="50" />
         </div>
         <div id="categoryContainer" class="sub-container">
           <label id="categoryLabel" class="input-label">Relationship(required)</label>
@@ -193,32 +219,60 @@
           <textarea rows="4" cols="50" id="memberNames" class="input-field form-field"></textarea>
         </div>
         <div class="sub-container">
-          <button id="submit" class="button submit-btn" onclick="submitDetails()">Save</button>
-          <button id="update" class="button update-btn" onclick="updateDetails()">Update</button>
-          <button id="reset" class="button reset-btn" onclick="resetDetails()">Reset</button>
+          <button id="submit" class="button submit-btn" onclick="submitDetails()">
+            <span>Save</span>
+          </button>
+          <button id="update" class="button update-btn" onclick="updateDetails()">
+            <span>Update</span>
+          </button>
+          <button id="reset" class="button reset-btn" onclick="resetDetails()">
+            <span>Reset</span>
+          </button>
         </div>
       </div>
       <div class="buttons-container">
         <div class="container-header">Features Available</div>
         <div class="container-sub-header">Each button is clickable. Please click on corresponding button to perform the desired action.</div>
         <div class="sub-container action-buttons-container">
-          <button id="getTotal" class="button" onclick="getInviteesCount()">Total Invitees Count</button>
-          <button id="delete" class="button" onclick="getInviteesCount('paternal')">Paternal Invitees Count</button>
-          <button id="update" class="button" onclick="getInviteesCount('maternal')">Maternal Invitees Count</button>
-          <button id="update" class="button" onclick="getInviteesCount('friends')">Friends Count</button>
+          <button id="getTotal" class="button" onclick="getInviteesCount()">
+            <span>Total Invitees Count</span>
+          </button>
+          <button id="delete" class="button" onclick="getInviteesCount('paternal')">
+            <span>Paternal Invitees Count</span>
+          </button>
+          <button id="update" class="button" onclick="getInviteesCount('maternal')">
+            <span>Maternal Invitees Count</span>
+          </button>
+          <button id="update" class="button" onclick="getInviteesCount('friends')">
+            <span>Friends Count</span>
+          </button>
         </div>
         <div class="sub-container action-buttons-container">
-          <button id="delete" class="button" onclick="deleteInvitee()">Delete Invitee</button>
-          <button id="update" class="button" onclick="updateInvitee()">Update Invitee Details</button>
+          <button id="delete" class="button" onclick="deleteInvitee()">
+            <span>Delete Invitee</span>
+          </button>
+          <button id="update" class="button" onclick="updateInvitee()">
+            <span>Update Invitee Details</span>
+          </button>
         </div>
         <div class="sub-container">
-          <button id="getCompleteList" class="button" onclick="getCompleteList()">Get Complete List</button>
-          <button id="getPaternalList" class="button" onclick="getCategoryWiseList('paternal')">Get Paternal List</button>
-          <button id="getMaternalList" class="button" onclick="getCategoryWiseList('maternal')">Get Maternal List</button>
-          <button id="getFriendsList" class="button" onclick="getCategoryWiseList('friends')">Get Friends List</button>
+          <button id="getCompleteList" class="button" onclick="getCompleteList()">
+            <span>Get Complete List</span>
+          </button>
+          <button id="getPaternalList" class="button" onclick="getCategoryWiseList('paternal')">
+            <span>Get Paternal List</span>
+          </button>
+          <button id="getMaternalList" class="button" onclick="getCategoryWiseList('maternal')">
+            <span>Get Maternal List</span>
+          </button>
+          <button id="getFriendsList" class="button" onclick="getCategoryWiseList('friends')">
+            <span>Get Friends List</span>
+          </button>
         </div>
         <div class="sub-container">
-          <button id="exportToExcel" class="button" onclick="exportToExcel()">Export to Excel Sheet</button>
+          <button id="exportToExcel" class="button" onclick="exportToExcel()">
+            <span>Export to Excel Sheet</span>
+          </button>
         </div>
       </div>
     </div>

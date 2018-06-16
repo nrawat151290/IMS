@@ -53,7 +53,8 @@
       margin-top: 20px;
     }
 
-    .banner {
+    .banner,
+    .notification {
       width: 100%;
       min-height: 60px;
       position: fixed;
@@ -65,28 +66,49 @@
       padding: 15px;
     }
 
+    .notification {
+      display: none;
+      z-index: 1000;
+    }
+
     .banner-text {
       font-weight: bold;
       font-size: 42px;
       color: red;
     }
 
+    .notification-text {
+      font-weight: bold;
+      font-size: 36px;
+      color: #2cb71c;
+    }
+
     .container .input-field {
       padding: 10px;
       border-radius: 2px;
       border: 1px solid lightgrey;
-      width: 400px;
+      width: 404px;
     }
 
     .container .button {
       border-radius: 2px;
       background-color: #01688b;
       border: none;
-      width: 150px;
+      width: 200px;
       height: 30px;
       color: white;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 500;
+    }
+
+    .container .reset-btn {
+      background-color: #ffffff;
+      color: #01688b;
+      border: 1px solid #01688b;
+    }
+
+    .container .update-btn {
+      display: none;
     }
 
     .fields-container,
@@ -131,6 +153,9 @@
 
 <body>
   <div class="main-container">
+    <div id="notification" class="notification">
+      <span class="notification-text" id="notificationText"></span>
+    </div>
     <div id="banner" class="banner">
       <span class="banner-text" id="bannerText">You have not selected any occasion</span>
     </div>
@@ -146,36 +171,44 @@
       <div class="fields-container">
         <div class="container-header">Please fill in the details</div>
         <div id="nameContainer" class="sub-container">
-          <label for="mainInvitee" id="mainInviteeNameLabel" class="input-label">Invitee Name(required)</label>
-          <input type="text" id="mainInvitee" class="input-field" />
+          <label for="name" id="mainInviteeNameLabel" class="input-label">Invitee Name(required)</label>
+          <input type="text" id="name" class="input-field form-field" />
         </div>
         <div id="categoryContainer" class="sub-container">
           <label id="categoryLabel" class="input-label">Relationship(required)</label>
-          <input type="radio" id="paternal" name="category" class="input-field-radio" value="paternal" />
+          <input type="radio" id="paternal" name="category" class="input-field-radio form-field" value="paternal" />
           <label for="paternal">Paternal</label>
-          <input type="radio" id="maternal" name="category" class="input-field-radio" value="maternal" />
+          <input type="radio" id="maternal" name="category" class="input-field-radio form-field" value="maternal" />
           <label for="maternal">Maternal</label>
-          <input type="radio" id="friends" name="category" class="input-field-radio" value="friends" />
+          <input type="radio" id="friends" name="category" class="input-field-radio form-field" value="friends" />
           <label for="friends">Friends</label>
         </div>
         <div id="noOfMembersContainer" class="sub-container">
-          <label for="numberOfMembers" id="noOfMembersLabel" class="input-label">Total Members(required)</label>
-          <input type="number" id="numberOfMembers" class="input-field" />
+          <label for="members" id="noOfMembersLabel" class="input-label">Total Members(required)</label>
+          <input type="number" id="members" class="input-field form-field" />
         </div>
         <div id="memberNamesContainer" class="sub-container">
           <label for="memberNames" id="memberNamesLabel" class="input-label">Member Names(optional)</label>
-          <textarea rows="4" cols="50" id="memberNames" class="input-field"></textarea>
+          <textarea rows="4" cols="50" id="memberNames" class="input-field form-field"></textarea>
         </div>
         <div class="sub-container">
-          <button id="submit" class="button" onclick="submitDetails()">Save</button>
+          <button id="submit" class="button submit-btn" onclick="submitDetails()">Save</button>
+          <button id="update" class="button update-btn" onclick="updateDetails()">Update</button>
+          <button id="reset" class="button reset-btn" onclick="resetDetails()">Reset</button>
         </div>
       </div>
       <div class="buttons-container">
         <div class="container-header">Features Available</div>
         <div class="container-sub-header">Each button is clickable. Please click on corresponding button to perform the desired action.</div>
         <div class="sub-container action-buttons-container">
-          <button id="getTotal" class="button" onclick="getTotalCount()">Get Total Invitees</button>
+          <button id="getTotal" class="button" onclick="getInviteesCount()">Total Invitees Count</button>
+          <button id="delete" class="button" onclick="getInviteesCount('paternal')">Paternal Invitees Count</button>
+          <button id="update" class="button" onclick="getInviteesCount('maternal')">Maternal Invitees Count</button>
+          <button id="update" class="button" onclick="getInviteesCount('friends')">Friends Count</button>
+        </div>
+        <div class="sub-container action-buttons-container">
           <button id="delete" class="button" onclick="deleteInvitee()">Delete Invitee</button>
+          <button id="update" class="button" onclick="updateInvitee()">Update Invitee Details</button>
         </div>
         <div class="sub-container">
           <button id="getCompleteList" class="button" onclick="getCompleteList()">Get Complete List</button>
@@ -282,6 +315,8 @@
   var SELECT_FIELDS = 'Please select the occasion first.';
   var INVALID_INVITEE_NAME = 'Entered name is not there in the list.';
   var NO_INVITEES_CATEGORY = 'There are no invitees in the ';
+  var UPDATE_SUCCESS = "'s details have been successfully updated.";
+  var DELETE_SUCCESS = " has been deleted from records.";
 
   (function () {
     if (!localStorage.getItem('weddingList')) {
@@ -291,6 +326,11 @@
       localStorage.setItem('engagementList', JSON.stringify([]));
     }
   })();
+
+  function scrollToTop() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
 
   function listToBeUsed(occasion) {
     var listToBeRetreived = occasion === "wedding" ? 'weddingList' : 'engagementList';
@@ -302,7 +342,7 @@
     return JSON.parse(localStorage.getItem(listToBeRetreived)) || [];
   }
 
-  function submitDetails() {
+  function fetchFieldValues() {
     var occasions = document.getElementsByName('occasion');
     var occasion = ""
     for (var i = 0; i < occasions.length; i++) {
@@ -311,9 +351,9 @@
       }
     }
 
-    var mainInvitee = document.getElementById('mainInvitee').value.trim().toLowerCase();
+    var name = document.getElementById('name').value.trim().toLowerCase();
 
-    var members = document.getElementById('numberOfMembers').value.trim();
+    var members = document.getElementById('members').value.trim();
     members = members === "" ? 0 : parseInt(members);
 
     var memberNames = document.getElementById('memberNames').value.trim();
@@ -325,25 +365,75 @@
         category = categories[i].value.trim();
       }
     }
-    if (!occasion || !mainInvitee || !members || !category) {
+
+    return {
+      name: name,
+      members: members,
+      memberNames: memberNames,
+      category: category,
+      occasion: occasion
+    }
+  }
+
+  function resetDetails() {
+    var fields = document.getElementsByClassName('form-field');
+    for (var i = 0; i < fields.length; i++) {
+      if (fields[i].type === "radio") {
+        fields[i].checked = false;
+      } else {
+        fields[i].value = "";
+      }
+    }
+  }
+
+  function updateDetails() {
+    var occasion = getOccasion();
+    var list = getInviteesList(occasion);
+    var fieldValues = fetchFieldValues();
+    var inviteeToBeUpdated = localStorage.getItem('inviteeToBeUpdated');
+    if (!list.length) {
+      displayMessage(NO_INVITEES);
+      return;
+    } else {
+      for (var i = 0; i < list.length; i++) {
+        if (inviteeToBeUpdated === list[i].name) {
+          list.splice(i, 1, fieldValues);
+        }
+      }
+      var whichList = listToBeUsed(occasion);
+      localStorage.setItem(whichList, JSON.stringify(list));
+      document.getElementById('submit').style.display = 'inline-block';
+      document.getElementById('update').style.display = 'none';
+      removeInviteesList();
+      getCompleteList();
+      resetDetails();
+      displayMessage(inviteeToBeUpdated.toUpperCase() + UPDATE_SUCCESS);
+    }
+
+  }
+
+  function submitDetails() {
+    var fieldValues = fetchFieldValues();
+    var name = fieldValues.name;
+    var occasion = fieldValues.occasion;
+    var members = fieldValues.members;
+    var category = fieldValues.category;
+    var memberNames = fieldValues.memberNames;
+
+    if (!occasion || !name || !members || !category) {
       displayMessage(REQ_FIELDS);
       return;
     }
-    var inviteeExists = checkInviteeExistence(mainInvitee, occasion);
+    var inviteeExists = checkInviteeExistence(name, occasion);
     if (!inviteeExists) {
       var list = getInviteesList(occasion);
-      list.push({
-        name: mainInvitee,
-        members: members,
-        memberNames: memberNames,
-        category: category,
-        occasion: occasion
-      });
+      list.push(fieldValues);
       var whichList = listToBeUsed(occasion);
       localStorage.setItem(whichList, JSON.stringify(list));
       getCompleteList();
+      resetDetails();
     } else {
-      displayMessage(mainInvitee.toUpperCase() + ' is already there in the list.');
+      displayMessage(name.toUpperCase() + ' is already there in the list.');
     }
   }
 
@@ -364,14 +454,14 @@
     }
   }
 
-  function getCompleteList() {
+  function getCompleteList(noMessage) {
     var occasion = getOccasion();
     if (!occasion) {
       displayMessage(SELECT_OCCASION);
       return;
     }
     var list = getInviteesList(occasion);
-    if (!list.length) {
+    if (!noMessage && !list.length) {
       displayMessage(NO_INVITEES)
     } else {
       generateTable(list)
@@ -398,7 +488,7 @@
     }
   }
 
-  function getTotalCount() {
+  function getInviteesCount(category) {
     var occasion = getOccasion();
     if (!occasion) {
       displayMessage(SELECT_OCCASION);
@@ -407,9 +497,72 @@
     var list = getInviteesList(occasion);
     var total = 0;
     for (var i = 0; i < list.length; i++) {
-      total = total + list[i].members;
+      if (!category) {
+        total = total + list[i].members;
+      } else if (category === "paternal" && list[i].category === category) {
+        total = total + list[i].members;
+      } else if (category === "maternal" && list[i].category === category) {
+        total = total + list[i].members;
+      } else if (category === "friends" && list[i].category === category) {
+        total = total + list[i].members;
+      }
+
     }
-    displayMessage("Total number of invitees till now are: " + total);
+    if (!category) {
+      displayMessage("Total number of invitees till now are " + total);
+    } else if (category === "paternal") {
+      displayMessage("Total number of paternal invitees are " + total);
+    } else if (category === "maternal") {
+      displayMessage("Total number of maternal invitees are " + total);
+    } else if (category === "friends") {
+      displayMessage("Total number of friends are " + total);
+    }
+  }
+
+  function updateInvitee() {
+    var occasion = getOccasion();
+    var list = getInviteesList(occasion);
+    if (!list.length) {
+      displayMessage(NO_INVITEES);
+      return;
+    }
+    var name = prompt('Please provide the invitee name for which you wish to update the details.');
+    if (!name) {
+      return;
+    } else {
+      if (!checkInviteeExistence(name, occasion)) {
+        displayMessage(INVALID_INVITEE_NAME);
+      } else {
+        localStorage.setItem('inviteeToBeUpdated', name);
+        if (!list.length) {
+          displayMessage(NO_INVITEES);
+        } else {
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].name === name) {
+              populateFields(list[i]);
+              return;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  function populateFields(data) {
+    var fields = document.getElementsByClassName('form-field');
+    for (var i = 0; i < fields.length; i++) {
+      var currentField = fields[i];
+      if (currentField.type === "radio") {
+        if (currentField.id === data[currentField.name]) {
+          currentField.checked = true;
+        }
+      } else {
+        currentField.value = data[currentField.id];
+      }
+    }
+    document.getElementById('update').style.display = 'inline-block';
+    document.getElementById('submit').style.display = 'none';
+    scrollToTop();
   }
 
   function deleteInvitee() {
@@ -443,6 +596,9 @@
           var whichList = listToBeUsed(occasion);
           localStorage.setItem(whichList, JSON.stringify(list));
           removeInviteesList();
+          getCompleteList(true);
+          resetDetails();
+          displayMessage(name.toUpperCase() + DELETE_SUCCESS);
         }
       }
     }
@@ -454,7 +610,7 @@
       document.getElementById('detailsContainer').style.display = 'block';
       document.getElementById('listContainer').style.display = 'block';
       document.getElementById('bannerText').innerHTML = elem.value.toUpperCase();
-      document.getElementById('bannerText').style.color = '#3e4e62';
+      document.getElementById('bannerText').style.color = '#01688b';
       removeInviteesList();
     }
   }
@@ -526,7 +682,14 @@
   }
 
   function displayMessage(message) {
-    alert(message);
+    var notification = document.getElementById('notification');
+    var notificationText = document.getElementById('notificationText');
+    notificationText.innerHTML = message;
+    notification.style.display = 'block';
+
+    setTimeout(function () {
+      notification.style.display = 'none';
+    }, 5000)
   }
 </script>
 

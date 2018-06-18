@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Invitees List</title>
+  <title>IMS</title>
   <style>
     * {
       box-sizing: border-box;
@@ -265,7 +265,7 @@
           </button>
         </div>
         <div class="sub-container">
-          <button id="getCompleteList" class="button" onclick="getCompleteList()">
+          <button id="getCompleteList" class="button" onclick="getCompleteList(null, true)">
             <span>Get Complete List</span>
           </button>
           <button id="getPaternalList" class="button" onclick="getCategoryWiseList('paternal')">
@@ -393,9 +393,9 @@
   var SAVE_SUCCESS = "'s details have been saved successfully.";
   var SELECT_OCCASION = "Please select an occasion first.";
 
-  function scrollToTop() {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
+  function scrollToPosition(position) {
+    document.body.scrollTop = position || 0;
+    document.documentElement.scrollTop = position || 0;
   }
 
   function getElementById(id) {
@@ -502,7 +502,7 @@
       list.push(fieldValues);
       var whichList = listToBeUsed(occasion);
       localStorage.setItem(whichList, JSON.stringify(list));
-      getCompleteList();
+      getCompleteList(null, false);
       resetDetails();
       displayMessage(name.toUpperCase() + SAVE_SUCCESS);
     } else {
@@ -527,10 +527,16 @@
       displayMessage(NO_INVITEES_CATEGORY + category.toUpperCase() + ' list.')
     } else {
       generateTable(members);
+      scrollToTable();
     }
   }
 
-  function getCompleteList(noMessage) {
+  function scrollToTable() {
+    var tableOffset = getElementById('listItems').offsetTop;
+    scrollToPosition(tableOffset);
+  }
+
+  function getCompleteList(noMessage, scroll) {
     var occasion = getOccasion();
     if (!occasion) {
       displayMessage(SELECT_OCCASION);
@@ -538,9 +544,10 @@
     }
     var list = getInviteesList(occasion);
     if (!noMessage && !list.length) {
-      displayMessage(NO_INVITEES)
+      displayMessage(NO_INVITEES);
     } else {
-      generateTable(list)
+      generateTable(list);
+      scroll && scrollToTable();
     }
   }
 
@@ -638,7 +645,7 @@
     }
     getElementById('update').style.display = 'inline-block';
     getElementById('submit').style.display = 'none';
-    scrollToTop();
+    scrollToPosition();
     getElementById('fieldsContainer').style.backgroundColor = '#f6f7f7'
   }
 
